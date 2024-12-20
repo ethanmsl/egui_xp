@@ -34,11 +34,13 @@ init: && list-external-deps _gen-env _gen-git-hooks _external-wasm-installs _rus
     cargo doc
 
 # Linting, formatting, typo checking, etc.
-check:
-    cargo clippy
+check: && test
+    cargo check --workspace --all-targets --all-features
+    cargo check --workspace --all-features --lib --target wasm32-unknown-unknown
+    cargo clippy --workspace --all-targets --all-features
     cargo fmt
-    typos
     committed
+    typos
 
 # Show docs.
 docs:
@@ -74,13 +76,13 @@ packadd name:
 
 # All tests, little feedback unless issues are detected.
 test:
-    cargo test --doc
-    cargo nextest run --cargo-quiet --cargo-quiet --no-fail-fast
+    cargo test --workspace --doc
+    cargo nextest run --cargo-quiet --cargo-quiet --no-fail-fast --all-targets
 
 # Runtests for a specific package.
 testp package="":
     cargo test --doc --quiet --package {{package}}
-    cargo nextest run --cargo-quiet --cargo-quiet --package {{package}} --no-fail-fast
+    cargo nextest run --cargo-quiet --cargo-quiet --all-targets --package {{package}} --no-fail-fast
 
 # Run a specific test with output visible. (Use '' for test_name to see all tests and set log_level)
 test-view test_name="" log_level="error":
@@ -95,7 +97,7 @@ testnx-view test_name="" log_level="error":
 # All tests, little feedback unless issues are detected.
 test-whisper:
     cargo test --doc --quiet
-    cargo nextest run --cargo-quiet --cargo-quiet --status-level=leak
+    cargo nextest run --cargo-quiet --cargo-quiet --all-targets --status-level=leak
 
 # Run performance analysis on a package.
 perf package *args:
