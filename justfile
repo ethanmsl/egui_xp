@@ -28,7 +28,7 @@ _default:
 
 # Initialize repository.
 [confirm]
-init: && list-external-deps _gen-env _gen-git-hooks _external-wasm-installs
+init: && list-external-deps _gen-env _gen-git-hooks _external-wasm-installs _rustup-component-installs
     cargo clean
     cargo build
     cargo doc
@@ -131,6 +131,11 @@ _remind-setenv:
 _external-wasm-installs:
     rustup target add wasm32-unknown-unknown
     cargo install --locked trunk
+
+_rustup-component-installs:
+    rustup component add rustfmt
+    rustup component add clippy
+    rustup component add rust-analyzer
 
 # Generate .env file from template, if .env file not present.
 _gen-env:
