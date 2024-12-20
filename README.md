@@ -6,7 +6,7 @@ use with:
 ```zsh
 cargo generate --git https://github.com/ethanmsl/eframe_template_template.git
 git add .
-git committ --message "chore: initial committ"
+git commit --message "chore: initial commit"
 echo 'interactive create with: '
 gh repo create
 git push
@@ -26,7 +26,7 @@ After giving some time for GitHub Actions to generate page, go to GitHub Pages a
 - operating on `nightly`
 
 ### Release Generation
-- requires api-token with appropriate permisssion
+- requires api-token with appropriate permission
 
 ## Creating a Cargo-Generate template
 

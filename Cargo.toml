@@ -23,14 +23,17 @@ allow_attributes = "warn"
 # tokio = { version = "1.42.0", features = ["full", "tracing"] }
 # ### - Networking -
 # reqwest = { version = "0.12.9", features = ["blocking", "json"] }
+
 # ## --Diagnostics--
 # see target native & target web
+
 # ## --Env & Files--
 # csv = "1.3.1"
 # dotenvy = "0.15.7"
 # include_dir = "0.7.4"
 # secrecy = "0.10.3"
 # walkdir = "2.5.0"
+
 ## --Ergonomics--
 bon = "3.2.0"
 derive_more = { version = "1.0.0", features = [
@@ -43,6 +46,7 @@ derive_more = { version = "1.0.0", features = [
 # indoc = "2.0.5"
 # itertools = "0.13.0"
 # strum = { version = "0.26.3", features = ["derive", "phf"] }
+
 ## --Interface--
 # ### - CLI -
 # clap = { version = "4", features = [
@@ -63,8 +67,10 @@ eframe = { version = "0.30", default-features = false, features = [
     "persistence",   # Enable restoring app state when restarting the app.
     "wayland",       # To support Linux (and CI)
 ] }
+
 # ## --Math--
 # rand = "0.8.5"
+
 ## --Parsing--
 # regex = { version = "1.11.1", features = ["logging"] }
 serde = { version = "1.0.215", features = ["derive"] }
