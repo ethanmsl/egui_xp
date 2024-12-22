@@ -1,106 +1,90 @@
-# Cargo-Generate eframe Template 
+# Cargo-Generate eframe Template
 
+# live examples
 
-use with:
+- core: [www.egui.rs/#demo](https://www.egui.rs/#demo)
+- etable: [rerun-io.github.io/egui_table/](https://rerun-io.github.io/egui_table/)
+- eplot: [emilk.github.io/egui_plot/](https://emilk.github.io/egui_plot/)
 
-```zsh
-cargo generate --git https://github.com/ethanmsl/eframe_template_template.git
-git add .
-git commit --message "chore: initial commit"
-echo 'interactive create with: '
-gh repo create
-git push
+# core ideas
+
 ```
-(if local `cargo generate --path <...>` also works)
+_______________               _____________                ________        _____________
+| "Framework" |  ---------->  | "Context" |  ----------->  | "Ui" |   -->  | "Widgets" |
+---------------               -------------                --------        -------------
+aka                           aka
+'system hookup'               'egui context'
+'umbilical'                   'deserialized ctx'
+'outer space interface'
+'post-rust translator'
 
-After giving some time for GitHub Actions to generate page, go to GitHub Pages and load from branch `gh-pages`
-
-
-## GitHub Actions
-
-
-### GitHub Pages
-- `gh-pages` branch is used to deploy the app to GitHub Pages.  Requires
-
-### Testing
-- operating on `nightly`
-
-### Release Generation
-- requires api-token with appropriate permission
-
-## Creating a Cargo-Generate template
-
-Translating this repo into a Cargo-Generate template:
-
-> [!WARNING]
-> These commands will be mangled by both the to and from cargo-generate processes.
-> There are in this 'super-parent' for documentation purposes only.
-```zsh
-echo
-rm -rf dist/ target/ target_wasm/ target_ra/ 
-rm -f fill_template.sh fill_template.ps1 flake.nix Cargo.lock
-rm -f .env .lycheecache
-echo
-sd 'emilk(\.github\.io/)egui_xp' 'ethanmsl${1}egui_xp' $(fd . -t f)
-sd 'emilk(/)egui_xp'             'ethanmsl${1}egui_xp' $(fd --hidden . -t f)
-sd 'egui_xp(_bg\.wasm|\.js)'     'egui_xp${1}'                      $(fd --hidden . -t f)
-sd '(name = ")egui_xp'           '${1}egui_xp'                    $(fd --hidden . -t f)
-sd '([^/])egui_xp'               '${1}egui_xp'                      $(fd --hidden . -t f)
-sd '([^/])Egui Xp'               '${1}Egui Xp'       $(fd --hidden . -t f)
-sd '([^/])egui_xp'               '${1}egui_xp'                    $(fd --hidden . -t f)
-sd '(authors = \[").*("\])'              '${1}Ethan S-L <ethanmsl@gmail.com>${2}'                     Cargo.toml
-echo
-cargo generate --test
-echo
-rg --hidden 'emilk.*egui_xp'
-rg --hidden '[^/]egui_xp'
-rg --hidden 'emilk/eframe.template'
-fd --unrestricted 'eframe|emilk'
 ```
 
-> [!NOTE]
-> These commands are designed to work *after* undergoing to & from cargo-generate'tion
-> but should not be needed.
-```zsh
-rg --hidden '\{\{ crate_name \}\}'
-echo '---- applying change ---'
-sd '\{\{ crate_name \}\}' 'egui_xp' $(fd --hidden . '.github/' -t f)
-echo '---- change applied---'
-rg --hidden '\{\{ crate_name \}\}'
-rg --hidden 'egui_xp' .github/
+| "**Framework**" |        "**Context**"        | "**Ui**" | "**Wigets**" |
+| :-------------- | :-------------------------: | :------: | -----------: |
+| eframe          | eframe::`run_simple_native` |          |        righT |
+| bevy_egui       |    eframe::`run_native`     |          |        righT |
+|                 |                             |  center  |        righT |
+| ...             |                             |  center  |        righT |
+
+# egui
+- **what**: with*in* Rust library for doig GUI-like data actions
+  - The main thing the programmer works with, but that gets and gives data via an umbilical "framework" that can translate to the machine/systems language that generates images, provides inputs, etc.
+
+```markdown
+To create a GUI using egui you first need a **Context** (by convention referred to by **ctx**). Then you add a Window or a SidePanel to get a **Ui**, which is what you’ll be using to add all the buttons and labels that you need.
 ```
 
-## Web Locally
+# eframe
 
-> [!NOTE]
-> See just command `web-local` as well.
+- **what**: umbilical that connects egui to multiple platforms. ("framework" in egui lang)
+- **why**: 'general purpose' connector to both "native" (OS) and "web" (WASM) platforms
+- **how**: implement _eframe_::`App` trait (define `update`) and then use _eframe_::`run(_simple)_native`
+  - _wasm_: look at eframe template for additional details on building for wasm and deploying
+  - _note_: `App` can be implemented on an _empty struct_. It is common to persist information across frames _via_ that struct, but not necessary. (This is particularly helpful when experimenting or when dropping in an exploratory UI to an existing program.)
 
-You can compile your app to [WASM](https://en.wikipedia.org/wiki/WebAssembly) and publish it as a web page.
+```rust
+pub trait App {
+    // Required method
+    fn update(&mut self, ctx: &Context, frame: &mut Frame);
 
-We use [Trunk](https://trunkrs.dev/) to build for web target.
-1. Install the required target with `rustup target add wasm32-unknown-unknown`.
-2. Install Trunk with `cargo install --locked trunk`.
-3. Run `trunk serve` to build and serve on `http://127.0.0.1:8080`. Trunk will rebuild automatically if you edit the project.
-4. Open `http://127.0.0.1:8080/index.html#dev` in a browser. See the warning below.
+    // Provided methods
+    fn save(&mut self, _storage: &mut dyn Storage) { ... }
+    fn on_exit(&mut self, _gl: Option<&Context>) { ... }
+    fn auto_save_interval(&self) -> Duration { ... }
+    fn clear_color(&self, _visuals: &Visuals) -> [f32; 4] { ... }
+    fn persist_egui_memory(&self) -> bool { ... }
+    fn raw_input_hook(&mut self, _ctx: &Context, _raw_input: &mut RawInput) { ... }
+}
+```
 
-> `assets/sw.js` script will try to cache our app, and loads the cached version when it cannot connect to server allowing your app to work offline (like PWA).
-> appending `#dev` to `index.html` will skip this caching, allowing us to load the latest builds during development.
+```rust
+use eframe::egui;
 
-## Web Deploy
-1. Just run `trunk build --release`.
-2. It will generate a `dist` directory as a "static html" website
-3. Upload the `dist` directory to any of the numerous free hosting websites including [GitHub Pages](https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
-4. we already provide a workflow that auto-deploys our app to GitHub pages if you enable it.
-> To enable Github Pages, you need to go to Repository -> Settings -> Pages -> Source -> set to `gh-pages` branch and `/` (root).
->
-> If `gh-pages` is not available in `Source`, just create and push a branch called `gh-pages` and it should be available.
->
-> If you renamed the `main` branch to something else (say you re-initialized the repository with `master` as the initial branch), be sure to edit the github workflows `.github/workflows/pages.yml` file to reflect the change
-> ```yml
-> on:
->   push:
->     branches:
->       - <branch name>
-> ```
+fn main() -> eframe::Result {
+    let onative_ptions = eframe::NativeOptions::default();
+    eframe::run_native("AppName", native_options, Box::new(|cc| Ok(Box::new(AppStruct::new(cc)))))
+}
 
-You can test the template app at <https://ethanmsl.github.io/egui_xp/>.
+#[derive(Default)]
+struct AppStruct {
+        // Optionally add fields and data here
+}
+
+impl AppStruct {
+    fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
+        // Restore app state using cc.storage (requires the "persistence" feature).
+        // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
+        // for e.g. egui::PaintCallback.
+        Self::default()
+    }
+}
+
+impl eframe::App for AppStruct {
+   fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+       egui::Panel::default().show(ctx, |ui| {
+       });
+   }
+}
+```
