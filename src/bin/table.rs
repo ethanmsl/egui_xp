@@ -3,7 +3,7 @@
 //!
 
 use eframe::egui;
-use egui::{Pos2, TextStyle, TextWrapMode, pos2};
+use egui::{TextStyle, TextWrapMode};
 use egui_xp::Result as MyResult; // NOTE: this is mine.
 use egui_xp::active_global_default_tracing_subscriber;
 
@@ -22,60 +22,11 @@ fn main() -> MyResult<()> {
         Ok(())
 }
 
-impl eframe::App for TableDemo {
-        fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-                ctx.set_pixels_per_point(2.0);
-                egui::CentralPanel::default().show(ctx, |ui| {
-                        self.ui(ui);
-                });
-        }
-}
-
-#[derive(PartialEq)]
-enum DemoType {
-        Manual,
-        ManyHomogeneous,
-        ManyHeterogenous,
-}
-
-/// Shows off a table with dynamic layout
-pub struct TableDemo {
-        demo:                 DemoType,
-        striped:              bool,
-        resizable:            bool,
-        clickable:            bool,
-        num_rows:             usize,
-        scroll_to_row_slider: usize,
-        scroll_to_row:        Option<usize>,
-        selection:            std::collections::HashSet<usize>,
-        checked:              bool,
-        reversed:             bool,
-}
-
 impl TableDemo {
         pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
                 Self::default()
         }
-}
 
-impl Default for TableDemo {
-        fn default() -> Self {
-                Self {
-                        demo:                 DemoType::Manual,
-                        striped:              true,
-                        resizable:            true,
-                        clickable:            true,
-                        num_rows:             10_000,
-                        scroll_to_row_slider: 0,
-                        scroll_to_row:        None,
-                        selection:            Default::default(),
-                        checked:              false,
-                        reversed:             false,
-                }
-        }
-}
-
-impl TableDemo {
         fn ui(&mut self, ui: &mut egui::Ui) {
                 let mut reset = false;
 
@@ -132,15 +83,13 @@ impl TableDemo {
                                         });
                                 });
                                 strip.cell(|ui| {
-                                        ui.vertical_centered(|ui| {
+                                        ui.vertical_centered(|_ui| {
                                                 // ui.add(crate::egui_github_link_file!());
                                         });
                                 });
                         });
         }
-}
 
-impl TableDemo {
         fn table_ui(&mut self, ui: &mut egui::Ui, reset: bool) {
                 use egui_extras::{Column, TableBuilder};
 
@@ -313,6 +262,51 @@ impl TableDemo {
                         }
                 }
         }
+}
+impl eframe::App for TableDemo {
+        fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+                ctx.set_pixels_per_point(2.0);
+                egui::CentralPanel::default().show(ctx, |ui| {
+                        // ATTN: this custom `.ui(_)` is doing h
+                        self.ui(ui);
+                });
+        }
+}
+
+/// Shows off a table with dynamic layout
+pub struct TableDemo {
+        demo:                 DemoType,
+        striped:              bool,
+        resizable:            bool,
+        clickable:            bool,
+        num_rows:             usize,
+        scroll_to_row_slider: usize,
+        scroll_to_row:        Option<usize>,
+        selection:            std::collections::HashSet<usize>,
+        checked:              bool,
+        reversed:             bool,
+}
+impl Default for TableDemo {
+        fn default() -> Self {
+                Self {
+                        demo:                 DemoType::Manual,
+                        striped:              true,
+                        resizable:            true,
+                        clickable:            true,
+                        num_rows:             10_000,
+                        scroll_to_row_slider: 0,
+                        scroll_to_row:        None,
+                        selection:            Default::default(),
+                        checked:              false,
+                        reversed:             false,
+                }
+        }
+}
+#[derive(PartialEq)]
+enum DemoType {
+        Manual,
+        ManyHomogeneous,
+        ManyHeterogenous,
 }
 
 fn expanding_content(ui: &mut egui::Ui) {
