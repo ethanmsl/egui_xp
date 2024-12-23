@@ -17,16 +17,13 @@ fn main() -> MyResult<()> {
                 "☰ Table",
                 native_options,
                 //
-                Box::new(|cc| Ok(Box::new(TableDemo::new(cc)))),
+                Box::new(|_cc| Ok(Box::new(TableDemo { ..Default::default() }))),
         )?;
         Ok(())
 }
 
 impl TableDemo {
-        pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
-                Self::default()
-        }
-
+        /// Convenience method for updating App.
         fn ui(&mut self, ui: &mut egui::Ui) {
                 let mut reset = false;
 
