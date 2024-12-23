@@ -9,12 +9,12 @@
 # core ideas
 
 ```
-_______________               _____________                ________        _____________
-| "Framework" |  ---------->  | "Context" |  ----------->  | "Ui" |   -->  | "Widgets" |
----------------               -------------                --------        -------------
-aka                           aka
-'system hookup'               'egui context'
-'umbilical'                   'deserialized ctx'
+_______________               _____________                ________                _____________
+| "Framework" |  ---------->  | "Context" |  ----------->  | "Ui" |  ----------->  | "Widgets" |
+---------------               -------------                --------                -------------
+aka                           aka                          aka
+'system hookup'               'egui context'               'specific region'
+'umbilical'                   'deserialized ctx'           'canvas corner'
 'outer space interface'
 'post-rust translator'
 
