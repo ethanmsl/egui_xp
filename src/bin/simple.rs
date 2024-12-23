@@ -3,7 +3,7 @@
 //!
 
 use eframe::egui;
-use egui::{Pos2, pos2};
+use egui::pos2;
 use egui_xp::Result as MyResult; // NOTE: this is mine.
 use egui_xp::active_global_default_tracing_subscriber;
 
@@ -16,7 +16,7 @@ fn main() -> MyResult<()> {
 }
 
 impl eframe::App for AppStruct {
-        fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
                 ctx.set_pixels_per_point(2.0);
                 egui::Window::new("My Window")
                         .default_open(true)
