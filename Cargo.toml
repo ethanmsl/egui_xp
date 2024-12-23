@@ -60,14 +60,22 @@ derive_more = { version = "1.0.0", features = [
 # owo-colors = "4"
 # indicatif = "0.17"
 ### - egui -
-egui = "0.30"
 eframe = { version = "0.30", default-features = false, features = [
     "default_fonts", # Embed the default egui fonts.
     "glow",          # Use the glow rendering backend. Alternative: "wgpu".
     "persistence",   # Enable restoring app state when restarting the app.
     "wayland",       # To support Linux (and CI)
 ] }
+egui = { version = "0.30.0", features = ["callstack", "document-features"] }
+egui_extras = { version = "0.30.0", features = [
+    "serde",
+    "datepicker",
+    "document-features",
+    "syntect",
+] }
 egui_table = "0.2.0"
+
+# egui_inbox = "0.7.0"
 
 # ## --Math--
 # rand = "0.8.5"
@@ -75,7 +83,6 @@ egui_table = "0.2.0"
 ## --Parsing--
 # regex = { version = "1.11.1", features = ["logging"] }
 serde = { version = "1.0.215", features = ["derive"] }
-egui_extras = "0.30.0"
 # serde_json = "1.0.133"
 
 # ---_ Dev-Dependencies _---
@@ -91,7 +98,7 @@ test-log = { version = "0.2.16", features = ["trace"] }
 # ---_ TARGET: native _---
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 ## --Diagnostics--
-tracing = {version = "0.1.41", features = ["release_max_level_off"]}
+tracing = { version = "0.1.41", features = ["release_max_level_off"] }
 tracing-appender = "0.2.3"
 tracing-error = "0.2.1"
 # tracing-flame = "0.2.0"
@@ -107,7 +114,7 @@ tracing-subscriber = { version = "0.3.19", features = [
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 ## --Diagnostics--
 log = "0.4"
-tracing = {version = "0.1.41", features = ["release_max_level_off"]}
+tracing = { version = "0.1.41", features = ["release_max_level_off"] }
 ## --Other--
 wasm-bindgen-futures = "0.4"
 web-sys = "0.3.70"           # to access the DOM (to hide the loading text)
