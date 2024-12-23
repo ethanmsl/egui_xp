@@ -20,14 +20,24 @@ aka                           aka
 
 ```
 
-| "**Framework**" |        "**Context**"        | "**Ui**" | "**Wigets**" |
-| :-------------- | :-------------------------: | :------: | -----------: |
-| eframe          | eframe::`run_simple_native` |          |        righT |
-| bevy_egui       |    eframe::`run_native`     |          |        righT |
-|                 |                             |  center  |        righT |
-| ...             |                             |  center  |        righT |
+| "**Framework**" |        "**Context**"        |           "**Ui**"           | "**Wigets**" |
+| :-------------- | :-------------------------: | :--------------------------: | -----------: |
+| eframe          | eframe::`run_simple_native` | (Centra/Side/TopBottom)Panel |       rightT |
+| bevy_egui       |    eframe::`run_native`     |          ScrollArea          |       rightT |
+|                 |                             |            Window            |       rightT |
+| ...             |                             |                              |       rightT |
+| ...             |                             |                              |       rightT |
+| ...             |                             |                              |       rightT |
+| ...             |                             |                              |       rightT |
+| ...             |                             |                              |       rightT |
+
+- [Context](file:///Users/esl/coding_dirs/rust/egui_xp/target/doc/egui/struct.Context.html)
+  - RefCounted (cheap to clone, shared mutable data)
+  - RwLock protected data (closure-taking methods deal with this automatically)
+  - recursive locking of context (within a closure) _NOT_ allowed
 
 # egui
+
 - **what**: with*in* Rust library for doig GUI-like data actions
   - The main thing the programmer works with, but that gets and gives data via an umbilical "framework" that can translate to the machine/systems language that generates images, provides inputs, etc.
 
