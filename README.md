@@ -12,24 +12,21 @@
 _______________               _____________                ________                _____________
 | "Framework" |  ---------->  | "Context" |  ----------->  | "Ui" |  ----------->  | "Widgets" |
 ---------------               -------------                --------                -------------
-aka                           aka                          aka
-'system hookup'               'egui context'               'specific region'
+aka                           aka                          aka                     aka
+'system hookup'               'egui context'               'specific region'       'stuff'
 'umbilical'                   'deserialized ctx'           'canvas corner'
 'outer space interface'
 'post-rust translator'
 
 ```
 
-| "**Framework**" |        "**Context**"        |           "**Ui**"           | "**Wigets**" |
-| :-------------- | :-------------------------: | :--------------------------: | -----------: |
-| eframe          | eframe::`run_simple_native` | (Centra/Side/TopBottom)Panel |       rightT |
-| bevy_egui       |    eframe::`run_native`     |          ScrollArea          |       rightT |
-|                 |                             |            Window            |       rightT |
-| ...             |                             |                              |       rightT |
-| ...             |                             |                              |       rightT |
-| ...             |                             |                              |       rightT |
-| ...             |                             |                              |       rightT |
-| ...             |                             |                              |       rightT |
+| "**Framework**" |        "**Context**"        |           "**Ui**"           | "**Widgets**" |
+| :-------------- | :-------------------------: | :--------------------------: | ------------: |
+| eframe          | eframe::`run_simple_native` | (Centra/Side/TopBottom)Panel |   ui.vertical |
+| bevy_egui       |    eframe::`run_native`     |          ScrollArea          | ui.horizontal |
+|                 |                             |            Window            |        ui.add |
+| ...             |             ...             |             ...              |     ui.button |
+| ...             |             ...             |             ...              |           ... |
 
 - [Context](file:///Users/esl/coding_dirs/rust/egui_xp/target/doc/egui/struct.Context.html)
   - RefCounted (cheap to clone, shared mutable data)
