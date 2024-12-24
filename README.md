@@ -12,8 +12,8 @@
 _______________               _____________                ________                _____________
 | "Framework" |  ---------->  | "Context" |  ----------->  | "Ui" |  ----------->  | "Widgets" |
 ---------------               -------------                --------                -------------
-aka                           aka                          aka
-'system hookup'               'egui context'               'specific region'
+aka                           aka                          aka                     aka
+'system hookup'               'egui context'               'specific region'       'stuff'
 'umbilical'                   'deserialized ctx'           'canvas corner'
 'outer space interface'
 'post-rust translator'
@@ -22,14 +22,10 @@ aka                           aka                          aka
 
 | "**Framework**" |        "**Context**"        |           "**Ui**"           | "**Wigets**" |
 | :-------------- | :-------------------------: | :--------------------------: | -----------: |
-| eframe          | eframe::`run_simple_native` | (Centra/Side/TopBottom)Panel |       rightT |
-| bevy_egui       |    eframe::`run_native`     |          ScrollArea          |       rightT |
-|                 |                             |            Window            |       rightT |
-| ...             |                             |                              |       rightT |
-| ...             |                             |                              |       rightT |
-| ...             |                             |                              |       rightT |
-| ...             |                             |                              |       rightT |
-| ...             |                             |                              |       rightT |
+| eframe          | eframe::`run_simple_native` | (Centra/Side/TopBottom)Panel |    ui.button |
+| bevy_egui       |    eframe::`run_native`     |          ScrollArea          |     ui.label |
+| ...             |             ...             |            Window            |    ui.slider |
+| ...             |             ...             |             ...              |          ... |
 
 - [Context](file:///Users/esl/coding_dirs/rust/egui_xp/target/doc/egui/struct.Context.html)
   - RefCounted (cheap to clone, shared mutable data)
@@ -53,7 +49,9 @@ To create a GUI using egui you first need a **Context** (by convention referred 
   - _wasm_: look at eframe template for additional details on building for wasm and deploying
   - _note_: `App` can be implemented on an _empty struct_. It is common to persist information across frames _via_ that struct, but not necessary. (This is particularly helpful when experimenting or when dropping in an exploratory UI to an existing program.)
 
+## Core Trait
 ```rust
+/// The interface by which `eframe` runs our code.
 pub trait App {
     // Required method
     fn update(&mut self, ctx: &Context, frame: &mut Frame);
@@ -68,17 +66,21 @@ pub trait App {
 }
 ```
 
+## Fancy-Fancy (standard) Style of Use
 ```rust
 use eframe::egui;
 
+// define eframe options (e.g. where to save data); `::default()` works well to get startedpart
+// Then `run_native` with a Boxed closure that returns a Result<Boxed App> (`AppCreator` as type alias)
 fn main() -> eframe::Result {
-    let onative_ptions = eframe::NativeOptions::default();
+    let native_options = eframe::NativeOptions::default();
     eframe::run_native("AppName", native_options, Box::new(|cc| Ok(Box::new(AppStruct::new(cc)))))
 }
 
 #[derive(Default)]
 struct AppStruct {
         // Optionally add fields and data here
+        // Fields useful for holding data across frames and for persisting app-specific data
 }
 
 impl AppStruct {
