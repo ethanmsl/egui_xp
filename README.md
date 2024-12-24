@@ -5,6 +5,7 @@
 - core: [www.egui.rs/#demo](https://www.egui.rs/#demo)
 - etable: [rerun-io.github.io/egui_table/](https://rerun-io.github.io/egui_table/)
 - eplot: [emilk.github.io/egui_plot/](https://emilk.github.io/egui_plot/)
+- lmerlin: [lucasmerlin.github.io/hello_egui](https://lucasmerlin.github.io/hello_egui/#/example/color_sort_vertical)
 
 # core ideas
 
