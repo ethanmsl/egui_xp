@@ -19,6 +19,7 @@ ___,git-cliff,___,___,"cargo install git-cliff","ci/cd changelog-generator","zsh
 ___,hyperfine,___,___,"cargo install --locked hyperfine","cli benchmark","zsh","https://github.com/sharkdp/hyperfine"
 ___,just,justfile,___,"cargo install just","runner","zsh","http://just.systems/man/en/"
 ___,jql,___,___,"cargo install jql","cli json-querier","zsh","https://medium.com/short-bits/jql-rust-based-json-query-language-ed1d7c6a1ae0"
+___,lychee,___,___,"cargo install lychee","cli http-link-checker","zsh","https://github.com/lycheeverse/lychee"
 ___,rg,ripgrep,___,"cargo install ripgrep","cli regex-text-search","zsh","https://github.com/BurntSushi/ripgrep"
 ___,rye,astral-rye,___,"cargo install --git https://github.com/astral-sh/rye rye","python rust-interfacing-manager","python,rust,zsh","https://rye.astral.sh"
 ___,samply,___,___,"cargo install --locked samply","cli perf-analysis","zsh","https://github.com/mstange/samply"

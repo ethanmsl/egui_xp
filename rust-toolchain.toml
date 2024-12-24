@@ -4,7 +4,7 @@
 [toolchain]
 channel = "nightly"
 targets = [ "wasm32-unknown-unknown" ]
-components = [ "rustfmt", "clippy" ]
+components = [ "rustfmt", "clippy", "rust-analyzer" ]
 
 # [toolchain]
 # channel = "1.81"  # Avoid specifying a patch version here; see https://github.com/ethanmsl/egui_xp/issues/145
