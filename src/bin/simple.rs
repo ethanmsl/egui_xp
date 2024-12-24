@@ -4,6 +4,7 @@
 
 use eframe::egui;
 use egui::pos2;
+use egui_extras::DatePickerButton;
 use egui_xp::Result as MyResult; // NOTE: this is mine.
 use egui_xp::active_global_default_tracing_subscriber;
 
@@ -12,6 +13,7 @@ fn main() -> MyResult<()> {
 
         let native_options = eframe::NativeOptions::default();
         eframe::run_native("AppName", native_options, Box::new(|cc| Ok(Box::new(AppStruct::new(cc)))))?;
+
         Ok(())
 }
 
@@ -39,6 +41,10 @@ impl eframe::App for AppStruct {
                         ui.heading("this is a ui.heading.");
                         ui.label("this is a ui.label.");
 
+                        ui.label("Date picker:");
+                        ui.add(DatePickerButton::new(&mut self.naive_dt));
+                        ui.add_space(10.0);
+
                         if ui.button("toggle open_var").clicked() {
                                 self.open_var = !self.open_var;
                         };
@@ -62,6 +68,7 @@ struct AppStruct {
         open_var:     bool,
         interactable: bool,
         enabled:      bool,
+        naive_dt:     chrono::NaiveDate,
 }
 
 impl AppStruct {
