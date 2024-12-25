@@ -51,12 +51,6 @@ use tracing_error::SpanTrace;
 pub enum ErrKind {
         //
         // `custom` errors
-        #[from(ignore)]
-        #[display("Unparsable character: {}", source_char)]
-        ParseOther { source_char: char },
-        #[from(ignore)]
-        #[display("Error extracting lines from input: {}", source_input)]
-        NoInputLines { source_input: String },
         //
         // `packed` errors
         #[display("Error with tracing_subscriber::EnvFilter parsing env directive: {}", source)]

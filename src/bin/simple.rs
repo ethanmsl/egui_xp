@@ -6,10 +6,10 @@ use eframe::egui;
 use egui::pos2;
 use egui_extras::DatePickerButton;
 use egui_xp::Result as MyResult; // NOTE: this is mine.
-use egui_xp::active_global_default_tracing_subscriber;
+use egui_xp::activate_global_default_tracing_subscriber;
 
 fn main() -> MyResult<()> {
-        let _log_writer_guard = active_global_default_tracing_subscriber()?;
+        let _log_writer_guard = activate_global_default_tracing_subscriber().call()?;
 
         let native_options = eframe::NativeOptions::default();
         eframe::run_native("AppName", native_options, Box::new(|cc| Ok(Box::new(AppStruct::new(cc)))))?;

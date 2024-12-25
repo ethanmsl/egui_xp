@@ -2,13 +2,19 @@
 
 // use egui_xp::TemplateApp;
 mod app;
+mod support;
 
-use crate::app::TemplateApp;
+use egui_xp::{Result, TemplateApp};
 
 // When compiling natively:
 #[cfg(not(target_arch = "wasm32"))]
-fn main() -> eframe::Result {
-        // env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
+fn main() -> Result<()> {
+        // #[cfg(debug_assertions)]
+        use egui_xp::activate_global_default_tracing_subscriber;
+        let _writer_guard: tracing_appender::non_blocking::WorkerGuard = activate_global_default_tracing_subscriber()
+                .maybe_env_default_level(None)
+                .maybe_trace_error_level(None)
+                .call()?;
 
         let native_options = eframe::NativeOptions {
                 viewport: egui::ViewportBuilder::default()
@@ -21,7 +27,8 @@ fn main() -> eframe::Result {
                 // ),
                 ..Default::default()
         };
-        eframe::run_native("Egui Xp", native_options, Box::new(|cc| Ok(Box::new(TemplateApp::new(cc)))))
+        eframe::run_native("Egui Xp", native_options, Box::new(|cc| Ok(Box::new(TemplateApp::new(cc)))))?;
+        Ok(())
 }
 
 // When compiling to web using trunk:

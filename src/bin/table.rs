@@ -5,12 +5,12 @@
 use eframe::egui;
 use egui::{TextStyle, TextWrapMode};
 use egui_xp::Result as MyResult; // NOTE: this is mine.
-use egui_xp::active_global_default_tracing_subscriber;
+use egui_xp::activate_global_default_tracing_subscriber;
 
 const NUM_MANUAL_ROWS: usize = 20;
 
 fn main() -> MyResult<()> {
-        let _log_writer_guard = active_global_default_tracing_subscriber()?;
+        let _log_writer_guard = activate_global_default_tracing_subscriber().call()?;
 
         let native_options = eframe::NativeOptions::default();
         eframe::run_native(

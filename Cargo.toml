@@ -101,10 +101,11 @@ test-log = { version = "0.2.16", features = ["trace"] }
 # ---_ TARGET: native _---
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 ## --Diagnostics--
-tracing = { version = "0.1.41", features = ["release_max_level_off"] }
+tracing = { version = "0.1.41", features = [] }
+# tracing = { version = "0.1.41", features = ["release_max_level_warn"] }
+# tracing = { version = "0.1.41", features = ["release_max_level_off"] }
 tracing-appender = "0.2.3"
 tracing-error = "0.2.1"
-# tracing-flame = "0.2.0"
 tracing-subscriber = { version = "0.3.19", features = [
     "env-filter",
     "tracing-log",
