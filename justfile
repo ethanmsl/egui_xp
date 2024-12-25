@@ -31,7 +31,7 @@ _default:
 init: && list-external-deps _gen-env _gen-git-hooks _external-wasm-installs _rustup-component-installs
     cargo clean
     cargo build
-    cargo doc
+    cargo doc --all-features --document-private-items
 
 # Linting, formatting, typo checking, etc.
 check: && test
