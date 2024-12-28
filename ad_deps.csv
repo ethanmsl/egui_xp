@@ -11,7 +11,6 @@ ___,cargo-machete,machete,___,"cargo install cargo-machete","rust dependency-win
 ___,cargo-nextest,nextest,___,"cargo install cargo-nextest --locked","rust tester","cargo,zsh","https://nexte.st",""
 ___,cargo-pgo,pgo,___,"cargo install cargo-pgo","rust profile-guided-optimizer","cargo,zsh","https://github.com/Kobzol/cargo-pgo",""
 ___,cargo-release,release,___,"cargo install cargo-release","rust release-helper","cargo,zsh","https://github.com/crate-ci/cargo-release",""
-___,cargo-watch,watch,___,"cargo install cargo-watch --locked","rust on-change-executor","cargo,zsh","https://github.com/watchexec/cargo-watch",""
 ___,choose,___,___,"cargo install choose","cli snippet-selector","zsh","https://github.com/theryangeary/choose",""
 ___,committed,___,___,"cargo install committed","git commit-check","zsh","https://github.com/crate-ci/committed",""
 ___,fd,___,___,"cargo install fd-find","cli file-search","zsh","https://github.com/sharkdp/fd",""
