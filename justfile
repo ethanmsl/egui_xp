@@ -27,7 +27,7 @@ _default:
         @just --list --unsorted
 
 # Initialize repository.
-[confirm]
+[confirm("This will:\n(1) perform standard cargo commands\n    (e.g. clean, build)\n(2) generate some files if not present\n    (e.g. git pre-commit hook, .env)\n(3) install external files\n    specifically: `trunk` via cargo and a wasm32 target via rustup.\n\nCommands can be inspected in the currently invoked `justfile`.\n\n-- Confirm initialization?")]
 init: && list-external-deps _gen-env _gen-git-hooks _external-wasm-installs _rustup-component-installs
     cargo clean
     cargo build
@@ -53,7 +53,7 @@ update-soft:
     cargo update --verbose
 
 # Update Rust-crates, first minor, then breaking changes.
-[confirm]
+[confirm("This will attempt to update dependencies past minor versions.  Confirm?")]
 update-hard: update-soft
     cargo update --verbose --breaking -Z unstable-options
 
