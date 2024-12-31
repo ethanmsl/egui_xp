@@ -1,5 +1,5 @@
 [package]
-name = "egui_xp"
+name = "egui-xp"
 version = "0.1.0"
 authors = ["Ethan S-L <ethanmsl@gmail.com>"]
 edition = "2024"
