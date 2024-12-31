@@ -1,17 +1,20 @@
 # Justfile (Convenience Command Runner)
 
 # rust vars
-RUST_LOG:= 'debug'
-RUST_BACKTRACE:= '1'
-RUSTFLAGS:='--cfg tokio_unstable'
-TOML_VERSION:=`rg '^version = ".*"' Cargo.toml | sd '.*"(.*)".*' '$1'`
+J_CARGO_CRATE_NAME:='egui-xp'
+J_CARGO_NO_WARN := '-Awarnings'
+J_RUST_LOG:= 'debug'
+J_RUST_BACKTRACE:= '1'
+J_RUSTFLAGS:='--cfg tokio_unstable'
+J_CARGO_TOML_VERSION:=`rg '^version = ".*"' Cargo.toml | sd '.*"(.*)".*' '$1'`
 # just path vars
-HOME_DIR := env_var('HOME')
-LOCAL_ROOT := justfile_directory()
-INVOCD_FROM := invocation_directory()
-INVOC_IS_ROOT := if INVOCD_FROM == LOCAL_ROOT { "true" } else { "false" }
+J_HOME_DIR := env_var('HOME')
+J_LOCAL_ROOT := justfile_directory()
+J_INVOCD_FROM := invocation_directory()
+J_INVOC_IS_ROOT := if J_INVOCD_FROM == J_LOCAL_ROOT { "true" } else { "false" }
 # custom vars
-FROZE_SHA_REGEX := 'FROZE_[a-fA-F0-9]{64}_FROZE-'
+J_FROZE_SHA_REGEX := 'FROZE_[a-fA-F0-9]{64}_FROZE-'
+J_VAR_OR_ENV_REGEX := '[A-Z][A-Z_0-9]{3}+'
 # ANSI Color Codes for use with echo command
 NC := '\033[0m'     # No Color
 CYN := '\033[0;36m' # Cyan
@@ -27,7 +30,19 @@ _default:
         @just --list --unsorted
 
 # Initialize repository.
-[confirm("This will:\n(1) perform standard cargo commands\n    (e.g. clean, build)\n(2) generate some files if not present\n    (e.g. git pre-commit hook, .env)\n(3) install external files\n    specifically: `trunk` via cargo and a wasm32 target via rustup.\n\nCommands can be inspected in the currently invoked `justfile`.\n\n-- Confirm initialization?")]
+[confirm(    
+'This will:
+(1) perform standard cargo commands
+    (e.g. clean, build)
+(2) generate some files if not present
+    (e.g. git pre-commit hook, .env)
+(3) install external files
+    specifically: `trunk` via cargo and a wasm32 target via rustup.
+
+Commands can be inspected in the currently invoked `justfile`.
+
+-- Confirm initialization?'
+)]
 init: && list-external-deps _gen-env _gen-git-hooks _external-wasm-installs _rustup-component-installs
     cargo clean
     cargo build
@@ -63,7 +78,7 @@ web-local:
 packadd name:
     cargo new --bin {{name}}
     rm -rf {{name}}
-    cargo generate --path ./.support_data/cargo_generate_templates/template__new_package --name {{name}}
+    cargo generate --path ./.support_data/cargo_generate_templates/_template__new_package --name {{name}}
 
 
 # All tests, little feedback unless issues are detected.
@@ -88,7 +103,7 @@ test-view test_name="" log_level="error":
 [group('test')]
 testnx-view test_name="" log_level="error":
     @echo "'Fun' Fact; the '--test' flag only allows integration test selection and will just fail on unit tests."
-    RUST_LOG={{log_level}} cargo nextest run {{test_name}} --no-capture --no-fail-fast
+    J_RUST_LOG={{log_level}} cargo nextest run {{test_name}} --no-capture --no-fail-fast
 
 # All tests, little feedback unless issues are detected.
 [group('test')]
@@ -135,6 +150,7 @@ _external-wasm-installs:
     rustup target add wasm32-unknown-unknown
     cargo install --locked trunk
 
+# Install rustup components, just in case
 _rustup-component-installs:
     rustup component add rustfmt
     rustup component add clippy
@@ -142,18 +158,40 @@ _rustup-component-installs:
 
 # Generate .env file from template, if .env file not present.
 _gen-env:
-    @ if [ -f '.env' ]; then echo '`{{BRN}}.env{{NC}}` exists, {{PRP}}skipping creation{{NC}}...' && exit 0; else cp -n .support_data/template.env .env; echo "{{BLU}}.env{{NC}} created from template. {{GRN}}Please fill in the necessary values.{{NC}}"; echo "e.g. via 'nvim .env'"; fi
+    @ if [ -f '.env' ]; \
+        then \
+        echo '`{{BRN}}.env{{NC}}` exists, {{PRP}}skipping creation{{NC}}...' && exit 0; \
+        else \
+        cp -n .support/_template.env .env; \
+        sd '\{\{replace_me:.*\}\}' '{{J_CARGO_CRATE_NAME}}' .env; \
+        echo "{{BLU}}.env{{NC}} created from template with {{GRN}}example{{NC}} values."; \
+        fi
+
 
 # Attempt to add all git-hooks. (no overwrite)
 _gen-git-hooks: _gen-precommit-hook _gen-commitmsg-hook
 
 # Attempt to add `pre-commit` git-hook. (no overwrite)
 _gen-precommit-hook:
-    @ if [ -f '.git/hooks/pre-commit' ]; then echo '`.git/hooks/{{BRN}}pre-commit{{NC}}` exists, {{PRP}}skipping creation{{NC}}...' && exit 0; else cp -n .support_data/git_hooks/pre-commit .git/hooks/pre-commit; chmod u+x .git/hooks/pre-commit; echo live "{{BLU}}pre-commit{{NC}} hook added to {{GRN}}.git/hooks{{NC}} and set as executable"; fi
+    @ if [ -f '.git/hooks/pre-commit' ]; \
+        then \
+        echo '`.git/hooks/{{BRN}}pre-commit{{NC}}` exists, {{PRP}}skipping creation{{NC}}...' && exit 0; \
+        else \
+        cp -n .support/git_hooks/pre-commit .git/hooks/pre-commit; \
+        chmod u+x .git/hooks/pre-commit; \
+        echo live "{{BLU}}pre-commit{{NC}} hook added to {{GRN}}.git/hooks{{NC}} and set as executable"; \
+        fi
 
 # Attempt to add `commit-msg` git-hook. (no overwrite)
 _gen-commitmsg-hook:
-    @ if [ -f '.git/hooks/commit-msg' ]; then echo '`.git/hooks/{{BRN}}commit-msg{{NC}}` exists, {{PRP}}skipping creation{{NC}}...' && exit 0; else cp -n .support_data/git_hooks/commit-msg .git/hooks/commit-msg; chmod u+x .git/hooks/commit-msg; echo live "{{BLU}}commit-msg{{NC}} hook added to {{GRN}}.git/hooks{{NC}} and set as executable"; fi
+    @ if [ -f '.git/hooks/commit-msg' ]; \
+        then \
+        echo '`.git/hooks/{{BRN}}commit-msg{{NC}}` exists, {{PRP}}skipping creation{{NC}}...' && exit 0; \
+        else \
+        cp -n .support/git_hooks/commit-msg .git/hooks/commit-msg; \
+        chmod u+x .git/hooks/commit-msg; \
+        echo live "{{BLU}}commit-msg{{NC}} hook added to {{GRN}}.git/hooks{{NC}} and set as executable"; \
+        fi
 
 # ######################################################################## #
 
@@ -179,11 +217,11 @@ _freeze file:
 
 # Unfreeze a file. (removes 'FROZE...FROZE-' tag from filename)
 _thaw file:
-	echo {{file}} | sd '{{FROZE_SHA_REGEX}}' '' | xargs mv -iv {{file}}
+	echo {{file}} | sd '{{J_FROZE_SHA_REGEX}}' '' | xargs mv -iv {{file}}
 
 # Search local files through ice.
 _arctic-recon iceless_name:
-	fd --max-depth 1 '{{FROZE_SHA_REGEX}}{{iceless_name}}' | rg {{iceless_name}}
+	fd --max-depth 1 '{{J_FROZE_SHA_REGEX}}{{iceless_name}}' | rg {{iceless_name}}
 
 
 # ######################################################################## #
@@ -201,22 +239,3 @@ _example-file-exists-test file:
     echo {{ if path_exists(file) == "true" { "hello" } else { "goodbye" } }}
 
 # ######################################################################## #
-
-
-# # Clean up cargo build artifacts.
-# [confirm]
-# teardown:
-#     cargo clean
-
-# # Auto-fix some errors picked up by check. (Manual exclusion of data folder as additional safeguard.)
-# [confirm]
-# fix:
-#      typos --exclude '*/data/*' --write-changes
-
-# # Run git hook.
-# git-hook hook='pre-commit':
-#     git hook run {{hook}}
-
-# # Watch a file: compile & run on changes.
-# watch file_to_run:
-#     cargo watch --quiet --clear --exec 'run --quiet --example {{file_to_run}}'
